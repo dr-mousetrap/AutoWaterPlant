@@ -75,7 +75,8 @@ void loop()
   }
   else
   {
-    
+    lcd.clear();
+    lcd.noBacklight();
   }
 }
 
@@ -141,7 +142,14 @@ void loop()
     break;
 
     case 6: // Displays when data was last recorded
-
+      lastscr(scrlast);
+     currentMillis = millis();
+    float minsSinceSD = (currentMillis - previousSDMillis) / 60000;
+     
+      lcd.setCursor(0,0);
+      lcd.print("Last Logged:");
+      lcd.setCursor(0,1);
+      lcd.print(minsSinceSD);
 
     break;
 
@@ -193,8 +201,11 @@ void SDWRITE()
 
   float photoData = analogRead(photoPin);
   float voltage = (float)photoData * 5 / 1023;
-
+while(!myFile)
+{
+  myFile.close();
   myFile = SD.open("data.txt", FILE_WRITE);
+}
 
   if (myFile) {
     Serial.print("Writing to test.txt...");
@@ -224,5 +235,6 @@ void SDCheck()
   if (currentMillis - previousSDMillis >= hourCheck)
     {
       SDWRITE();
+      previousSDMillis = currentMillis;
     }
 }
