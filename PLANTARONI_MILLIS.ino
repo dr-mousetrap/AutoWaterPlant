@@ -34,7 +34,7 @@ bool isScreenOn = false;
 //millis commands
 unsigned long currentMillis = 0;
 unsigned long previousSDMillis = 0;
-unsigned long previousLedB = 0;
+unsigned long lastWatered = 0;
 
 //millis intervals
 const int hourCheck = 3600000;
@@ -70,6 +70,7 @@ void loop()
   SDCheck();
   if(isScreenOn == true)
   {
+    lcd.backlight();
     whatScreen();
     scrSelect();
   }
