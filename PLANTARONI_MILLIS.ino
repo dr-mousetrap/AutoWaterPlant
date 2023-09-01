@@ -34,11 +34,12 @@ bool isScreenOn = false;
 //millis commands
 unsigned long currentMillis = 0;
 unsigned long previousSDMillis = 0;
+unsigned long scrOffCalculate = 0;
 unsigned long lastWatered = 0;
 
 //millis intervals
 const int hourCheck = 3600000;
-const int screenTimeCheck = 180000;
+const int screenTimeCheck = 18000;
 
 void setup() {
   lcd.init();
@@ -68,17 +69,7 @@ void setup() {
 void loop() 
 {
   SDCheck();
-  if(isScreenOn == true)
-  {
-    lcd.backlight();
-    whatScreen();
-    scrSelect();
-  }
-  else
-  {
-    lcd.clear();
-    lcd.noBacklight();
-  }
+  scrOnCheck();
 }
 
  void scrSelect()
@@ -175,6 +166,8 @@ void whatScreen()
   {
     if (look == 1)
     {
+      currentMillis = millis();
+      scrOffCalculate = currentMillis;
       scrset += 1;
       scrset %= 7;
     }
@@ -188,6 +181,32 @@ void lastscr(int)
   {
     lcd.clear();
     scrlast = scrset;
+  }
+}
+
+void scrOnCheck()
+{
+  if (isScreenOn == false)
+  {
+    lcd.clear();
+    lcd.noBacklight();
+    if(digitalRead(btnPin) == HIGH)
+    {
+      isScreenOn = true;
+      scrOffCalculate = currentMillis;
+    }
+  }
+  if(isScreenOn == true)
+  {
+    currentMillis = millis();
+    lcd.backlight();
+    whatScreen();
+    scrSelect();
+    if (currentMillis - scrOffCalculate >= screenTimeCheck)
+    {
+        isScreenOn = false;
+        scrset = -1;
+    }
   }
 }
 
