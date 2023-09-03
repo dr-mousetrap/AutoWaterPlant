@@ -258,3 +258,8 @@ void SDCheck()
       previousSDMillis = currentMillis;
     }
 }
+
+void waterPlant()
+{
+  
+}
