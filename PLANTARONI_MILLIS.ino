@@ -6,10 +6,16 @@
 //All data pins
 const int tempPin = 4;
 const int btnPin = 2;
-const int soilOn = 5;
+const int soilOn = 7;
 const int chipSelect = 10;
 const int soilPin = A0;
 const int photoPin = A1;
+const int pump1 = 8;
+const int pump2 = 9;
+const int fan1 = 5;
+const int fan2 = 6;
+const int fanReg = 3; 
+
 
 LiquidCrystal_I2C lcd(0x27, 16, 2); //LCD screen setup
 
@@ -55,6 +61,13 @@ void setup() {
 
   pinMode(chipSelect, OUTPUT);
 
+  pinMode(pump1, OUTPUT);
+  pinMode(pump2, OUTPUT);
+  
+  pinMode(fan1, OUTPUT);
+  pinMode(fan2, OUTPUT);
+  pinMode(fanReg, OUTPUT);
+  
   digitalWrite(soilOn, LOW);
 
    if (!SD.begin()) {
@@ -62,7 +75,7 @@ void setup() {
     return;
   }
   Serial.println("initialization done.");
-
+  
   SDWRITE();
 }
 
@@ -106,12 +119,13 @@ void loop()
       lastscr(scrlast);
       digitalWrite(soilOn, HIGH);
       value = analogRead(soilPin);
-
+      int per = map(value, 0, 1023, 0, 100);
+    
       lcd.setCursor(1,0);
       lcd.print("Soil Moisture:");
       lcd.setCursor(2,1);
-      lcd.print(value);
-      
+      lcd.print(per);
+      lcd.print("%");
       digitalWrite(soilOn, LOW);
     break;
 
@@ -217,6 +231,7 @@ void SDWRITE()
 
   digitalWrite(soilOn, HIGH);
   value = analogRead(soilPin);
+  int perc = map(value, 0, 1023, 0, 100);
   digitalWrite(soilOn, LOW);
 
   float photoData = analogRead(photoPin);
@@ -236,7 +251,7 @@ while(!myFile)
   myFile.print(humid);
   myFile.print(", ");
   //Soil Moisture
-  myFile.print(value);
+  myFile.print(perc);
   myFile.print(", ");
   //Light Sensor
   myFile.println(voltage);
@@ -255,11 +270,18 @@ void SDCheck()
   if (currentMillis - previousSDMillis >= hourCheck)
     {
       SDWRITE();
+      plantCheck();
       previousSDMillis = currentMillis;
     }
+}
+
+void plantCheck()
+{
+  
 }
 
 void waterPlant()
 {
   
 }
+
