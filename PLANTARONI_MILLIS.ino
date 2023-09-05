@@ -44,14 +44,15 @@ bool isScreenOn = false;
 unsigned long currentMillis = 0;
 unsigned long previousSDMillis = 0;
 unsigned long scrOffCalculate = 0;
-unsigned long lastWatered = 0;
 unsigned long previousWater =0;
+unsigned long previousFan =0;
 
 //millis intervals
 const int hourCheck = 18000;
 //3600000
 const int screenTimeCheck = 18000;
 const int waterTime = 10000;
+const int fanTime = 30000;
 
 void setup() {
   lcd.init();
@@ -89,7 +90,7 @@ void loop()
 {
   SDCheck();
   scrOnCheck();
-  stopWater();
+  stopAll();
 }
 
  void scrSelect()
@@ -149,9 +150,13 @@ void loop()
 
     case 5: // Displays when plant last watered (in hours)
       lastscr(scrlast);
+      currentMillis = millis();
+      float minsSinceWater = (currentMillis - previousWater) / 60000;
 
-
-
+      lcd.setCursor(0,0);
+      lcd.print("Last Watered:");
+      lcd.setCursor(0,1);
+      lcd.print(minsSinceWater);
     break;
 
     case 6: // Displays when data was last recorded
@@ -238,7 +243,7 @@ void SDWRITE()
 
   digitalWrite(soilOn, HIGH);
   value = analogRead(soilPin);
-  int perc = map(value, 0, 1023, 0, 100);
+  perc = map(value, 0, 1023, 0, 100);
   digitalWrite(soilOn, LOW);
 
   float photoData = analogRead(photoPin);
@@ -297,22 +302,28 @@ void plantCheck()
         wasWater = false;
     }
 
-  if (temp >= 24)
+  if (temp >= 24 || humid >= 55)
   {
-    
+    fanPlant();
   }
+}
+
+void fanPlant()
+{
+  digitalWrite(fan1, HIGH);
+  digitalWrite(fan2, LOW);
+  previousFan = millis();
 }
 
 void waterPlant()
 {
-  Serial.println("Watering");
   water = true;
   digitalWrite(pump1, HIGH);
   digitalWrite(pump2, LOW);
   previousWater = millis();
 }
 
-void stopWater()
+void stopAll()
 {
  if (water == true)
  {
@@ -321,7 +332,11 @@ void stopWater()
   digitalWrite(pump1, LOW);
   digitalWrite(pump2, LOW);
   water = false;
-  Serial.println("done Watering");
   }
  }
+  if (currentMillis - previousFan >= fanTime)
+  {
+  digitalWrite(fan1, LOW);
+  digitalWrite(fan2, LOW);
+  }
 }
