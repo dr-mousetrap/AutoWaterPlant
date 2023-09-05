@@ -29,10 +29,12 @@ DHT dht(tempPin, DHTTYPE);
 int scrset = -1;
 int scrlast;
 int laststate;
+int perc;
 float temp;
 float humid;
 float value;
 float photoData;
+bool wasWater = false;
 
 //ScreenOn Variable
 bool isScreenOn = false;
@@ -42,10 +44,12 @@ unsigned long currentMillis = 0;
 unsigned long previousSDMillis = 0;
 unsigned long scrOffCalculate = 0;
 unsigned long lastWatered = 0;
+unsigned long previousWater =0;
 
 //millis intervals
 const int hourCheck = 3600000;
 const int screenTimeCheck = 18000;
+const int waterTime = 10000;
 
 void setup() {
   lcd.init();
@@ -69,6 +73,7 @@ void setup() {
   pinMode(fanReg, OUTPUT);
   
   digitalWrite(soilOn, LOW);
+  digitalWrite(fanReg, 95);
 
    if (!SD.begin()) {
     Serial.println("initialization failed!");
@@ -231,7 +236,7 @@ void SDWRITE()
 
   digitalWrite(soilOn, HIGH);
   value = analogRead(soilPin);
-  int perc = map(value, 0, 1023, 0, 100);
+  perc = map(value, 0, 1023, 0, 100);
   digitalWrite(soilOn, LOW);
 
   float photoData = analogRead(photoPin);
@@ -277,11 +282,29 @@ void SDCheck()
 
 void plantCheck()
 {
-  
+   if(wasWater != true)
+      {
+        if (perc <= 25)
+       {
+        waterPlant();
+        wasWater = true;
+       } 
+      }
+    else if (wasWater == true)
+    {
+        wasWater = false;
+    }
 }
 
 void waterPlant()
 {
-  
+  digitalWrite(pump1, HIGH);
+  digitalWrite(pump2, LOW);
+  previousWater = millis();
+  while (!((currentMillis - previousWater) <= waterTime))
+  {
+    currentMillis = millis();
+  }
+  digitalWrite(pump1, LOW);
+  digitalWrite(pump2, LOW);
 }
-
