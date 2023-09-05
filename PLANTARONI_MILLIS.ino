@@ -301,10 +301,11 @@ void waterPlant()
   digitalWrite(pump1, HIGH);
   digitalWrite(pump2, LOW);
   previousWater = millis();
-  while (!((currentMillis - previousWater) <= waterTime))
+  while ((currentMillis - previousWater) <= waterTime)
   {
     currentMillis = millis();
   }
   digitalWrite(pump1, LOW);
   digitalWrite(pump2, LOW);
 }
+
