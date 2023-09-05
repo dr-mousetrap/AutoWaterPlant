@@ -296,6 +296,11 @@ void plantCheck()
     {
         wasWater = false;
     }
+
+  if (temp >= 24)
+  {
+    
+  }
 }
 
 void waterPlant()
