@@ -48,8 +48,7 @@ unsigned long previousWater =0;
 unsigned long previousFan =0;
 
 //millis intervals
-const int hourCheck = 18000;
-//3600000
+const int hourCheck = 3600000;
 const int screenTimeCheck = 18000;
 const int waterTime = 10000;
 const int fanTime = 30000;
