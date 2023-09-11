@@ -36,6 +36,7 @@ float value;
 float photoData;
 bool wasWater = false;
 bool water = false;
+string status = "good";
 
 //ScreenOn Variable
 bool isScreenOn = false;
@@ -97,8 +98,12 @@ void scrSelect()
   
     if (scrset == 0)
     {
-      lastscr();
-      lcd.print("AAAAAA");
+      lcd.setCursor(0,0);
+      lcd.print("PlantKiller3000");
+      lcd.setCursor(0,1);   //Move cursor to character 2 on line 1
+      lcd.print("Reginald is");
+      lcd.setCursor(12,1);
+      lcd.print(status);
 
    }
 
@@ -274,6 +279,7 @@ void SDCheck()
       SDWRITE();
       plantCheck();
       previousSDMillis = currentMillis;
+      status = "read";
     }
 }
 
@@ -285,17 +291,24 @@ void plantCheck()
        {
         waterPlant();
         wasWater = true;
+        status = "dry";
        } 
       }
     else if (wasWater == true)
     {
         wasWater = false;
+        status = "wet";
     }
 
   if (temp >= 24 || humid >= 55)
   {
     digitalWrite(fanReg, 93);
     fanPlant();
+    status = "fan";
+  }
+  if (temp >= 30 || temp <= -2 || humid >= 75 || humid <= 0 || perc >= 60 || perc <= 0 ||)
+  {
+    status = "dead";
   }
 }
 
