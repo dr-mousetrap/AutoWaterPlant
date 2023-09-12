@@ -2,6 +2,7 @@
 #include "DHT.h"
 #include <SPI.h>
 #include <SD.h>
+#include <DFRobot_DS1307.h>
 
 //All data pins
 const int tempPin = 4;
@@ -19,11 +20,16 @@ const int fanReg = 3;
 
 LiquidCrystal_I2C lcd(0x27, 16, 2); //LCD screen setup
 
+DFRobot_DS1307 DS1307;
+
 File myFile; //File Setup
 
 //Temp&Humid Setup
 #define DHTTYPE DHT11 
 DHT dht(tempPin, DHTTYPE);
+
+//Sd ID
+int SDID = 0;
 
 //Variables for different sensors
 int scrset = -1;
@@ -84,6 +90,9 @@ void setup() {
   Serial.println("initialization done.");
   
   SDWRITE();
+
+  DS1307.start();
+  DS1307.setSqwPinMode(DS1307.eSquareWave_1Hz);
 }
 
 void loop() 
