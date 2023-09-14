@@ -33,7 +33,7 @@ int SDID = 0;
 
 //Variables for different sensors
 int scrset = -1;
-int scrLast;
+int scrLast = 0;
 int laststate;
 int perc;
 float temp;
@@ -42,7 +42,7 @@ float value;
 float photoData;
 bool wasWater = false;
 bool water = false;
-string status = "good";
+String status = "good";
 
 //ScreenOn Variable
 bool isScreenOn = false;
@@ -104,7 +104,9 @@ void loop()
 
 void scrSelect()
  {
-  
+  if (scrset >= 1 && scrset <= 7) 
+  {
+   
     if (scrset == 0)
     {
       lcd.setCursor(0,0);
@@ -113,8 +115,7 @@ void scrSelect()
       lcd.print("Reginald is");
       lcd.setCursor(12,1);
       lcd.print(status);
-
-   }
+    }
 
     if(scrset == 1) //Displays Current temperature
     {
@@ -187,6 +188,21 @@ void scrSelect()
       lcd.setCursor(0,1);
       lcd.print(minsSinceSD);
     }
+
+    if (scrset == 7) // Displays Current Time
+    {
+      
+    }
+  } else 
+    {
+        lastscr();
+        lcd.setCursor(0, 0);
+        lcd.print("Welcome Person");
+        lcd.setCursor(0, 1);
+        lcd.print("Reginald is");
+        lcd.setCursor(12, 1);
+        lcd.print(status);
+    }
  }
 
 void whatScreen()
@@ -236,6 +252,7 @@ void scrOnCheck()
     if (currentMillis - scrOffCalculate >= screenTimeCheck)
     {
         isScreenOn = false;
+        scrset = -1;    
     }
   }
 }
@@ -315,7 +332,7 @@ void plantCheck()
     fanPlant();
     status = "fan";
   }
-  if (temp >= 30 || temp <= -2 || humid >= 75 || humid <= 0 || perc >= 60 || perc <= 0 ||)
+  if (temp >= 30 || temp <= -2 || humid >= 75 || humid <= 0 || perc >= 60 || perc <= 0)
   {
     status = "dead";
   }
