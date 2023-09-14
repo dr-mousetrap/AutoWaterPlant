@@ -143,7 +143,7 @@ void scrSelect()
       lastscr();
       digitalWrite(soilOn, HIGH);
       value = analogRead(soilPin);
-      int per = map(value, 0, 1023, 0, 100);
+      int per = map(value, 0, 28, 0, 100);
     
       lcd.setCursor(1,0);
       lcd.print("Soil Moisture:");
@@ -247,7 +247,7 @@ void SDWRITE()
 
   digitalWrite(soilOn, HIGH);
   value = analogRead(soilPin);
-  perc = map(value, 0, 1023, 0, 100);
+  perc = map(value, 0, 28, 0, 100);
   digitalWrite(soilOn, LOW);
 
   float photoData = analogRead(photoPin);
