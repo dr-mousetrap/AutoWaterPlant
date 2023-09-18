@@ -60,6 +60,9 @@ const int screenTimeCheck = 18000;
 const int waterTime = 5000;
 const int fanTime = 15000;
 
+// clockread variable
+char timeStamp[128];
+
 void setup() {
   lcd.init();
   lcd.clear();         
@@ -195,7 +198,11 @@ void scrSelect()
 
     if (scrset == 7) // Displays Current Time
     {
-      
+      clockRead();
+      lcd.setCursor(0,0);
+      lcd.print("Current Time");
+      lcd.setCursor(0,1);
+      lcd.print(timeStamp);
     }
   } else 
     {
@@ -276,7 +283,11 @@ while(!myFile)
 }
 
   if (myFile) {
-    Serial.print("Writing to test.txt...");
+Serial.print("Writing to test.txt...");
+  //Clock
+  clockRead();
+  myFile.print(timeStamp);
+  myFile.print(", ");
   //Temperature
   myFile.print(temp);
   myFile.print(", ");
@@ -338,14 +349,13 @@ void plantCheck()
   }
 }
 
-int moistureRead(){
+void moistureRead(){
     // Turn on our power for the moisture sensor
     digitalWrite(soilOn, HIGH);
     delay(10);
     perc = map(analogRead(soilPin), 0, 800, 0, 100);
     delay(10);
     digitalWrite(soilOn, LOW);
-    return perc;
 }
 
 void fanPlant()
@@ -361,6 +371,21 @@ void waterPlant()
   digitalWrite(pump1, HIGH);
   digitalWrite(pump2, LOW);
   previousWater = millis();
+}
+
+void clockRead()
+{
+  uint16_t getTimeBuff[7] = {0};
+
+  DS1307.getTime(getTimeBuff);
+  sprintf(timeStamp, "%d/%d/%d,%d:%d:%d,",
+            getTimeBuff[6],
+            getTimeBuff[5],
+            getTimeBuff[4],
+            getTimeBuff[2],
+            getTimeBuff[1],
+            getTimeBuff[0]
+            );
 }
 
 void stopAll()
