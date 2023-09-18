@@ -55,7 +55,7 @@ unsigned long previousWater =0;
 unsigned long previousFan =0;
 
 //millis intervals
-const int hourCheck = 18000; //3600000;
+const int hourCheck = 3600000;
 const int screenTimeCheck = 18000;
 const int waterTime = 5000;
 const int fanTime = 15000;
@@ -90,7 +90,14 @@ void setup() {
   Serial.println("initialization done.");
   
   SDWRITE();
+ 
+  while( !(DS1307.begin()) ){
 
+    Serial.println("Communication with device failed, please check connection");
+
+    delay(3000);
+
+  }
   DS1307.start();
   DS1307.setSqwPinMode(DS1307.eSquareWave_1Hz);
 }
@@ -142,10 +149,7 @@ void scrSelect()
     if (scrset == 3) // Displays Soil Moisture
     {
       lastscr();
-      digitalWrite(soilOn, HIGH);
-      value = analogRead(soilPin);
-      int per = map(value, 0, 28, 0, 100);
-    
+      moistureRead();
       lcd.setCursor(1,0);
       lcd.print("Soil Moisture:");
       lcd.setCursor(2,1);
@@ -261,12 +265,8 @@ void SDWRITE()
 {
   temp = dht.readTemperature();  
   humid = dht.readHumidity();
-
-  digitalWrite(soilOn, HIGH);
-  value = analogRead(soilPin);
-  perc = map(value, 0, 28, 0, 100);
-  digitalWrite(soilOn, LOW);
-
+  moistureRead();
+  
   float photoData = analogRead(photoPin);
   float voltage = (float)photoData * 5 / 1023;
 while(!myFile)
@@ -336,6 +336,16 @@ void plantCheck()
   {
     status = "dead";
   }
+}
+
+int moistureRead(){
+    // Turn on our power for the moisture sensor
+    digitalWrite(soilOn, HIGH);
+    delay(10);
+    perc = map(analogRead(soilPin), 0, 800, 0, 100);
+    delay(10);
+    digitalWrite(soilOn, LOW);
+    return perc;
 }
 
 void fanPlant()
