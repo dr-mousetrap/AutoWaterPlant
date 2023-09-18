@@ -114,7 +114,7 @@ void loop()
 
 void scrSelect()
  {
-  if (scrset >= 1 && scrset <= 7) 
+  if (scrset >= 0 && scrset <= 7) 
   {
    
     if (scrset == 0)
