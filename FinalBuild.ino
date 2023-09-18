@@ -156,7 +156,7 @@ void scrSelect()
       lcd.setCursor(1,0);
       lcd.print("Soil Moisture:");
       lcd.setCursor(2,1);
-      lcd.print(per);
+      lcd.print(perc);
       digitalWrite(soilOn, LOW);
    }
 
