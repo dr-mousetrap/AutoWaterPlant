@@ -386,6 +386,8 @@ void clockRead()
             getTimeBuff[1],
             getTimeBuff[0]
             );
+
+  String converted(timeStamp); 
 }
 
 void stopAll()
