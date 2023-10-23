@@ -40,8 +40,6 @@ float temp;
 float humid;
 float value;
 float photoData;
-bool wasWater = false;
-bool water = false;
 String status = "good";
 
 //ScreenOn Variable
@@ -206,21 +204,7 @@ void scrSelect()
         lcd.print(status);
     }
  }
-
-void whatScreen()
-{
-
-}
-
-void lastscr()
-{
-  if (scrLast != scrset)
-  {
-    lcd.clear();
-    scrLast = scrset;
-  }
-}
-
+ 
 void scrOnCheck()
 {
   if (isScreenOn == false)
@@ -262,10 +246,20 @@ void scrOnCheck()
   }
 }
 
+void lastscr()
+{
+  if (scrLast != scrset)
+  {
+    lcd.clear();
+    scrLast = scrset;
+  }
+}
+
 
 //SD CARD FUNCTIONS
 void SDWRITE()
 {
+  clockRead();
   temp = dht.readTemperature();  
   humid = dht.readHumidity();
   moistureRead();
@@ -281,8 +275,7 @@ while(!myFile)
   if (myFile) {
 Serial.print("Writing to test.txt...");
   //Clock
-  clockRead();
-  myFile.print(outputDate + outputTime + outputDOW);
+  myFile.print(outputDate + "|" + outputTime + "|" + outputDOW);
   myFile.print(", ");
   //Temperature
   myFile.print(temp);
@@ -295,7 +288,7 @@ Serial.print("Writing to test.txt...");
   myFile.print(", ");
   //Light Sensor
   myFile.println(voltage);
-  // close the file:
+  // close the file
     myFile.close();
     Serial.println("done.");
   } else {
@@ -316,11 +309,11 @@ void allCheck()
       previousSDMillis = currentMillis;
       status = "read";
     }
-       if (perc <= 25)
-       {
-        waterPlant();
-        status = "dry";
-       } 
+   if (perc <= 25)
+    {
+      waterPlant();
+      status = "dry";
+    } 
 
   if (temp >= 24 || humid >= 55)
   {
@@ -353,6 +346,7 @@ void waterPlant()
   digitalWrite(pump2, LOW);
   previousWater = millis();
 }
+
 //CLOCK
 void clockRead()
 {
@@ -363,18 +357,17 @@ void clockRead()
   outputTime = String(getTimeBuff[2]) + ":" + String(getTimeBuff[1]) + ":" + String(getTimeBuff[0]);
   outputDOW = String(getTimeBuff[3]);
 }
+
 //STOP EVERYTHING
 void stopAll()
 {
- if (water == true)
  {
  if (//NULL)
   {
   digitalWrite(pump1, LOW);
   digitalWrite(pump2, LOW);
-  water = false;
   }
- }
+  
   if (//NULL)
   {
   digitalWrite(fan1, LOW);
