@@ -48,9 +48,9 @@ String status = "good";
 bool isScreenOn = false;
 
 // clockread variable
-string outputDate;
-string outputTime;
-string outputDOW;
+String outputDate;
+String outputTime;
+String outputDOW;
 
 
 void setup() {
@@ -97,7 +97,7 @@ void setup() {
 
 void loop() 
 {
-  SDCheck();
+  allCheck();
   scrOnCheck();
   stopAll();
 }
@@ -209,19 +209,7 @@ void scrSelect()
 
 void whatScreen()
 {
-  int look = digitalRead(btnPin);
-  
-  if (look != laststate)
-  {
-    if (look == 1)
-    {
-      currentMillis = millis();
-      scrOffCalculate = currentMillis;
-      scrset += 1;
-      scrset %= 8;
-    }
-    laststate = look;
-  }
+
 }
 
 void lastscr()
@@ -242,22 +230,39 @@ void scrOnCheck()
     if(digitalRead(btnPin) == HIGH)
     {
       isScreenOn = true;
-      scrOffCalculate = currentMillis;
+      //TIMECHECKSET
     }
   }
   if(isScreenOn == true)
   {
-    currentMillis = millis();
+    //TIME READ
     lcd.backlight();
-    whatScreen();
+
+    int look = digitalRead(btnPin);
+  
+    if (look != laststate)
+    {
+     if (look == 1)
+     {
+       //TIME READ
+       //TIMECHECKSET
+       scrset += 1;
+       scrset %= 8;
+     }
+     laststate = look;
+    }
+     
     scrSelect();
-    if (currentMillis - scrOffCalculate >= screenTimeCheck)
+    
+    if (//NULL)
     {
         isScreenOn = false;
         scrset = -1;    
     }
   }
 }
+
+
 //SD CARD FUNCTIONS
 void SDWRITE()
 {
@@ -299,44 +304,29 @@ Serial.print("Writing to test.txt...");
   }
 }
 
-void SDCheck()
+}
+//CheckEverything
+void allCheck()
 {
- currentMillis = millis();
-  if (currentMillis - previousSDMillis >= hourCheck)
+  //TIME READ
+  if (//NULL)
     {
       SDWRITE();
       plantCheck();
       previousSDMillis = currentMillis;
       status = "read";
     }
-}
-//Plant Functions
-void plantCheck()
-{
-   if(wasWater != true)
-      {
-        if (perc <= 25)
+       if (perc <= 25)
        {
         waterPlant();
-        wasWater = true;
         status = "dry";
        } 
-      }
-    else if (wasWater == true)
-    {
-        wasWater = false;
-        status = "wet";
-    }
 
   if (temp >= 24 || humid >= 55)
   {
     digitalWrite(fanReg, 93);
     fanPlant();
     status = "fan";
-  }
-  if (temp >= 30 || temp <= -2 || humid >= 75 || humid <= 0 || perc >= 60 || perc <= 0)
-  {
-    status = "dead";
   }
 }
 
@@ -378,14 +368,14 @@ void stopAll()
 {
  if (water == true)
  {
- if (currentMillis - previousWater >= waterTime)
+ if (//NULL)
   {
   digitalWrite(pump1, LOW);
   digitalWrite(pump2, LOW);
   water = false;
   }
  }
-  if (currentMillis - previousFan >= fanTime)
+  if (//NULL)
   {
   digitalWrite(fan1, LOW);
   digitalWrite(fan2, LOW);
