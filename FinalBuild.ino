@@ -111,7 +111,7 @@ void loop()
   scrOnCheck();
   stopAll();
 }
-
+// SCREEN FUNCTIONS
 void scrSelect()
  {
   if (scrset >= 0 && scrset <= 7) 
@@ -267,7 +267,7 @@ void scrOnCheck()
     }
   }
 }
-
+//SD CARD FUNCTIONS
 void SDWRITE()
 {
   temp = dht.readTemperature();  
@@ -319,7 +319,7 @@ void SDCheck()
       status = "read";
     }
 }
-
+//Plant Functions
 void plantCheck()
 {
    if(wasWater != true)
@@ -372,7 +372,7 @@ void waterPlant()
   digitalWrite(pump2, LOW);
   previousWater = millis();
 }
-
+//CLOCK
 void clockRead()
 {
   uint16_t getTimeBuff[7] = {0};
@@ -387,7 +387,7 @@ void clockRead()
             getTimeBuff[0]
             );
 }
-
+//STOP EVERYTHING
 void stopAll()
 {
  if (water == true)
