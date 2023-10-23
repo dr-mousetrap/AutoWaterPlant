@@ -47,21 +47,11 @@ String status = "good";
 //ScreenOn Variable
 bool isScreenOn = false;
 
-//millis commands
-unsigned long currentMillis = 0;
-unsigned long previousSDMillis = 0;
-unsigned long scrOffCalculate = 0;
-unsigned long previousWater =0;
-unsigned long previousFan =0;
-
-//millis intervals
-const int hourCheck = 3600000;
-const int screenTimeCheck = 18000;
-const int waterTime = 5000;
-const int fanTime = 15000;
-
 // clockread variable
-char timeStamp[128];
+string outputDate;
+string outputTime;
+string outputDOW;
+
 
 void setup() {
   lcd.init();
@@ -111,6 +101,7 @@ void loop()
   scrOnCheck();
   stopAll();
 }
+
 // SCREEN FUNCTIONS
 void scrSelect()
  {
@@ -286,7 +277,7 @@ while(!myFile)
 Serial.print("Writing to test.txt...");
   //Clock
   clockRead();
-  myFile.print(timeStamp);
+  myFile.print(outputDate + outputTime + outputDOW);
   myFile.print(", ");
   //Temperature
   myFile.print(temp);
@@ -378,14 +369,9 @@ void clockRead()
   uint16_t getTimeBuff[7] = {0};
 
   DS1307.getTime(getTimeBuff);
-  sprintf(timeStamp, "%d/%d/%d,%d:%d:%d,",
-            getTimeBuff[6],
-            getTimeBuff[5],
-            getTimeBuff[4],
-            getTimeBuff[2],
-            getTimeBuff[1],
-            getTimeBuff[0]
-            );
+  outputDate = String(getTimeBuff[6]) + "/" + String(getTimeBuff[5]) + "/" + String(getTimeBuff[4]);
+  outputTime = String(getTimeBuff[2]) + ":" + String(getTimeBuff[1]) + ":" + String(getTimeBuff[0]);
+  outputDOW = String(getTimeBuff[3]);
 }
 //STOP EVERYTHING
 void stopAll()
