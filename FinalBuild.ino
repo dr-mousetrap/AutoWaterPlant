@@ -50,6 +50,8 @@ String outputDate;
 String outputTime;
 String outputDOW;
 
+int mins;
+int secs;
 
 void setup() {
   lcd.init();
@@ -297,12 +299,12 @@ Serial.print("Writing to test.txt...");
   }
 }
 
-}
+} 
 //CheckEverything
 void allCheck()
 {
-  //TIME READ
-  if (//NULL)
+  mins = getTimeBuff[1];
+  if (mins != prevMins && (mins == 0 || mins == 30 ))
     {
       SDWRITE();
       plantCheck();
@@ -317,6 +319,7 @@ void allCheck()
 
   if (temp >= 24 || humid >= 55)
   {
+    
     digitalWrite(fanReg, 93);
     fanPlant();
     status = "fan";
@@ -336,7 +339,6 @@ void fanPlant()
 {
   digitalWrite(fan1, HIGH);
   digitalWrite(fan2, LOW);
-  previousFan = millis();
 }
 
 void waterPlant()
@@ -344,7 +346,6 @@ void waterPlant()
   water = true;
   digitalWrite(pump1, HIGH);
   digitalWrite(pump2, LOW);
-  previousWater = millis();
 }
 
 //CLOCK
@@ -362,13 +363,14 @@ void clockRead()
 void stopAll()
 {
  {
- if (//NULL)
+  secs = getTimeBuff[0];
+ if ((secs - prevSecs) >= 10)
   {
   digitalWrite(pump1, LOW);
   digitalWrite(pump2, LOW);
   }
   
-  if (//NULL)
+  if ((secs - prevSecsFan) >= 25)
   {
   digitalWrite(fan1, LOW);
   digitalWrite(fan2, LOW);
