@@ -49,9 +49,14 @@ bool isScreenOn = false;
 String outputDate;
 String outputTime;
 String outputDOW;
-
+int hours;
 int mins;
 int secs;
+
+int secsStore;
+int prevMins;
+int lastLog;
+int lastWater;
 
 void setup() {
   lcd.init();
@@ -166,20 +171,20 @@ void scrSelect()
     if(scrset == 5) // Displays when plant last watered (in hours)
     {
       lastscr();
-      currentMillis = millis();
-      float minsSinceWater = (currentMillis - previousWater) / 60000;
+      hours = getTimeBuff[2];
+      int scrWaterRead = (hours - lastWater);
 
       lcd.setCursor(0,0);
       lcd.print("Last Watered:");
       lcd.setCursor(0,1);
-      lcd.print(minsSinceWater);
+      lcd.print(scrWaterRead);
     }
 
     if (scrset == 6)// Displays when data was last recorded
     {
       lastscr();
-     currentMillis = millis();
-    float minsSinceSD = (currentMillis - previousSDMillis) / 60000;
+     mins = getTimeBuff[1];
+     //time since sdcard has been logged (minutes)
      
       lcd.setCursor(0,0);
       lcd.print("Last Logged:");
@@ -216,12 +221,11 @@ void scrOnCheck()
     if(digitalRead(btnPin) == HIGH)
     {
       isScreenOn = true;
-      //TIMECHECKSET
+      secsStore = getTimeBuff[0];
     }
   }
   if(isScreenOn == true)
   {
-    //TIME READ
     lcd.backlight();
 
     int look = digitalRead(btnPin);
@@ -230,8 +234,7 @@ void scrOnCheck()
     {
      if (look == 1)
      {
-       //TIME READ
-       //TIMECHECKSET
+       secsStore = getTimeBuff[0];
        scrset += 1;
        scrset %= 8;
      }
@@ -239,8 +242,8 @@ void scrOnCheck()
     }
      
     scrSelect();
-    
-    if (//NULL)
+    secs = getTimeBuff[0];
+    if ((secs - secsStore) >= 17)
     {
         isScreenOn = false;
         scrset = -1;    
@@ -306,32 +309,30 @@ void allCheck()
   mins = getTimeBuff[1];
   if (mins != prevMins && (mins == 0 || mins == 30 ))
     {
-      SDWRITE();
-      plantCheck();
-      previousSDMillis = currentMillis;
-      status = "read";
-    }
-   if (perc <= 25)
-    {
-      waterPlant();
-      status = "dry";
-    } 
+          SDWRITE();
+          status = "read";
+        if (perc <= 25)
+        {
+          waterPlant();
+          status = "dry";
+        } 
 
-  if (temp >= 24 || humid >= 55)
-  {
+        if (temp >= 24 || humid >= 55)
+        {
     
-    digitalWrite(fanReg, 93);
-    fanPlant();
-    status = "fan";
-  }
+          digitalWrite(fanReg, 93);
+          fanPlant();
+          status = "fan";
+        }
+    }
 }
 
 void moistureRead(){
     // Turn on our power for the moisture sensor
     digitalWrite(soilOn, HIGH);
-    delay(10);
+    delay(500);
     perc = map(analogRead(soilPin), 0, 800, 0, 100);
-    delay(10);
+    delay(500);
     digitalWrite(soilOn, LOW);
 }
 
